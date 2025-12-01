@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Soundwave Pro — Ultimate Music Player</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="logo">🎧 SOUNDWAVE PRO</div>
+    <img src="LOGO.jpg" alt="logo" id="img-logo">
+    <ul class="nav-links">
+      <li><a href="#" id="home-tab" class="active">🏠 Home</a></li>
+      <li><a href="#" id="search-tab">🔍 Search</a></li>
+      <li><a href="#" id="library-tab">📚 Library</a></li>
+      <li><a href="#" id="playlist-tab">🎶 Playlists</a></li>
+      <li><a href="#" id="timer-tab">⏰ Sleep Timer</a></li>
+    </ul>
+
+    <div class="sidebar-bottom">
+      <button id="create-playlist" class="btn">➕ Create Playlist</button>
+      <div class="small muted" style="margin-top:12px">Playlists & metadata saved locally</div>
+    </div>
+  </nav>
+`
+  <!-- HEADER -->
+  <header class="header">
+    <div class="left-header">
+      <button id="menu-btn" class="menu-btn" title="Open menu">☰</button>
+      <h1 id="page-title">Discover</h1>
+    </div>
+    <div class="header-actions">
+      <input id="search-input" placeholder="Search songs, artists, playlists..." />
+      <button id="open-queue" class="btn" title="Open queue (Q)">📜 Queue</button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main-content" id="main-content">
+    <!-- HOME -->
+    <section id="home-section" class="section">
+      <div class="upload-box">
+        <h3>📤 Upload songs (MP3 / audio)</h3>
+        <input type="file" id="song-upload" accept="audio/*" multiple />
+        <p id="upload-status" class="muted"></p>
+        <div style="margin-top:8px">
+          <button id="export-playlists" class="btn">⬇ Export Playlists</button>
+          <input id="import-playlists" type="file" accept="application/json" style="display:none" />
+          <button id="import-playlists-btn" class="btn">⬆ Import Playlists</button>
+          <button id="export-songs-tar" class="btn">🗜 Export Selected Songs (TAR)</button>
+        </div>
+      </div>
+
+      <h2>Library (Sample & Uploaded)</h2>
+      <div style="margin-bottom:10px">
+        <small class="muted">Tip: click "Add to queue" or "Play" on a song. Use checkboxes to mark songs for export.</small>
+      </div>
+      <div id="song-list" class="list-grid"></div>
+    </section>
+
+    <!-- PLAYLISTS -->
+    <section id="playlist-section" class="section hidden">
+      <h2>Your Playlists</h2>
+      <form id="playlist-form" class="playlist-form">
+        <input id="playlist-name" placeholder="Playlist name" required />
+        <button type="submit" class="btn">Create</button>
+      </form>
+      <div id="playlists" class="list-grid"></div>
+    </section>
+
+    <!-- TIMER -->
+    <section id="timer-section" class="section hidden">
+      <h2>Sleep Timer</h2>
+      <p>Choose a preset duration (the player will auto-pause):</p>
+      <div class="timer-buttons">
+        <button class="btn timer-btn" data-min="5">5 min</button>
+        <button class="btn timer-btn" data-min="10">10 min</button>
+        <button class="btn timer-btn" data-min="15">15 min</button>
+        <button class="btn timer-btn" data-min="30">30 min</button>
+        <button class="btn" id="timer-off">Turn off</button>
+      </div>
+      <p id="timer-status" class="muted" style="margin-top:12px"></p>
+    </section>
+  </main>
+
+  <!-- QUEUE PANEL -->
+  <aside id="queue-panel" class="queue-panel" aria-hidden="true">
+    <div class="queue-header">
+      <h3>Now Playing Queue</h3>
+      <button id="close-queue" class="btn">✖</button>
+    </div>
+
+    <div class="queue-controls">
+      <button id="shuffle-queue" class="btn">🔀 Shuffle</button>
+      <button id="clear-queue" class="btn">🗑 Clear</button>
+    </div>
+
+    <ul id="queue-list" class="queue-list" aria-dropeffect="move"></ul>
+    <p class="muted drag-hint">Tip: drag & drop songs to reorder the queue</p>
+  </aside>
+
+  <!-- TOASTS -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- FOOTER PLAYER -->
+  <footer class="music-player">
+    <div class="song-info">
+      <div class="rotating" id="rotating">
+        <img id="song-img" class="cover" src="https://cdn-icons-png.flaticon.com/512/727/727245.png" alt="cover" />
+      </div>
+      <div>
+        <div id="song-title">No song</div>
+        <div id="song-artist" class="muted">Upload songs or add to queue</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="control-row">
+        <button id="prev" class="btn" title="Previous (←)">⏮</button>
+        <button id="play" class="btn" title="Play/Pause (Space)">▶</button>
+        <button id="next" class="btn" title="Next (→)">⏭</button>
+        <button id="shuffle" class="btn" title="Shuffle queue">🔀</button>
+        <button id="repeat" class="btn" title="Repeat mode">🔁</button>
+      </div>
+
+      <div class="progress-row">
+        <span id="time-current" class="muted">0:00</span>
+        <input id="progress" type="range" min="0" max="100" value="0" />
+        <span id="time-total" class="muted">0:00</span>
+      </div>
+
+      <canvas id="waveform" height="60" aria-hidden="true"></canvas>
+    </div>
+
+    <div class="right-controls">
+      <div class="volume">🔊 <input id="volume" type="range" min="0" max="100" value="80" /></div>
+    </div>
+  </footer>
+
+  <audio id="audio" preload="metadata"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
